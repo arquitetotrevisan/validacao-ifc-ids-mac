@@ -11,6 +11,7 @@ REPORT_PATH = "validation_report.json"
 def validate_ifc_with_ids(ifc_file, ids_root):
     """Valida um arquivo IFC contra o IDS fornecido."""
     report = {"file": ifc_file, "results": []}
+    
     try:
         # Abre o arquivo IFC
         model = ifcopenshell.open(ifc_file)
