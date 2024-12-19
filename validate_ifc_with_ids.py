@@ -49,8 +49,20 @@ def validate_ifc_with_ids(ifc_file, ids_root):
         ifc_site = model.by_type("IfcSite")
         if ifc_site:
             # Obter coordenadas, considerando que alguns valores podem ser None ou zero
-            latitude = ifc_site[0].RefLatitude if ifc_site[0].RefLatitude is not None else 0.0
-            longitude = ifc_site[0].RefLongitude if ifc_site[0].RefLongitude is not None else 0.0
+            def convert_to_decimal(degrees_tuple):
+                """Converte uma tupla (graus, minutos, segundos, frações) em decimal."""
+                if degrees_tuple:
+                    degrees, minutes, seconds, *fractions = degrees_tuple
+                    decimal = degrees + (minutes / 60) + (seconds / 3600)
+                    if fractions:
+                        decimal += fractions[0] / (3600 * 10000)  # Assume que frações são baseadas em décimos de segundos
+                return decimal
+    return 0.0
+
+latitude = convert_to_decimal(ifc_site[0].RefLatitude)
+longitude = convert_to_decimal(ifc_site[0].RefLongitude)
+elevation = ifc_site[0].RefElevation if ifc_site[0].RefElevation is not None else 0.0
+
             elevation = ifc_site[0].RefElevation if ifc_site[0].RefElevation is not None else 0.0
 
             # Apresentação das coordenadas de forma compreensível
