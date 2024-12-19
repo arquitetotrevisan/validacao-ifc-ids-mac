@@ -56,8 +56,8 @@ def validate_ifc_with_ids(ifc_file, ids_root):
                     decimal = degrees + (minutes / 60) + (seconds / 3600)
                     if fractions:
                         decimal += fractions[0] / (3600 * 10000)  # Assume que frações são baseadas em décimos de segundos
-                return decimal
-    return 0.0
+                    return decimal
+                return 0.0
 
 latitude = convert_to_decimal(ifc_site[0].RefLatitude)
 longitude = convert_to_decimal(ifc_site[0].RefLongitude)
