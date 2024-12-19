@@ -59,10 +59,8 @@ def validate_ifc_with_ids(ifc_file, ids_root):
                     return decimal
                 return 0.0
 
-latitude = convert_to_decimal(ifc_site[0].RefLatitude)
-longitude = convert_to_decimal(ifc_site[0].RefLongitude)
-elevation = ifc_site[0].RefElevation if ifc_site[0].RefElevation is not None else 0.0
-
+            latitude = convert_to_decimal(ifc_site[0].RefLatitude)
+            longitude = convert_to_decimal(ifc_site[0].RefLongitude)
             elevation = ifc_site[0].RefElevation if ifc_site[0].RefElevation is not None else 0.0
 
             # Apresentação das coordenadas de forma compreensível
