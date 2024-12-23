@@ -8,6 +8,13 @@ IDS_PATH = "./ids.xsd"
 # Caminho para o relatório JSON gerado
 REPORT_PATH = "validation_report.json"
 
+# Definindo a lista de campos adicionais fora da função
+additional_fields = [
+    "IfcWall", "IfcSlab", "IfcWindow", "IfcDoor",
+    "IfcFurniture", "IfcBeam", "IfcColumn", "IfcRailing",
+    "IfcStair", "IfcRoof"
+]
+
 def validate_ifc_with_ids(ifc_file, ids_root):
     """Valida um arquivo IFC contra o IDS fornecido."""
     report = {"file": ifc_file, "results": []}
@@ -47,12 +54,6 @@ def validate_ifc_with_ids(ifc_file, ids_root):
             result["IfcSpace"] = "Menos de 2 espaços encontrados"
 
         # Verifica a presença dos novos campos Ifc
-        additional_fields = [
-            "IfcWall", "IfcSlab", "IfcWindow", "IfcDoor",
-            "IfcFurniture", "IfcBeam", "IfcColumn", "IfcRailing",
-            "IfcStair", "IfcRoof"
-        ]
-
         for field in additional_fields:
             entities = model.by_type(field)
             if entities:
