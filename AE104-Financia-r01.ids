@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<InformationDeliverySpecification xmlns="https://standards.buildingsmart.org/IDS">
+  <Context>
+    <Version>1.1</Version>
+    <Name>Verificação Completa IFC - Banco Público</Name>
+    <Description>Especificação para verificar a conformidade de um projeto IFC com requisitos mínimos para pedidos de financiamento, incluindo disciplinas de projeto e validação de elementos duplicados ou sobrepostos.</Description>
+    <Applicability>
+      <Project>
+        <PropertySet>
+          <Name>ProjectInfo</Name>
+        </PropertySet>
+      </Project>
+    </Applicability>
+  </Context>
+
+  <Requirements>
+    <!-- Verificar se IfcProject está preenchido -->
+    <Entity>
+      <Name>IfcProject</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcBuilding está preenchido -->
+    <Entity>
+      <Name>IfcBuilding</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se existe pelo menos um IfcBuildingStorey -->
+    <Entity>
+      <Name>IfcBuildingStorey</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+        <MinimumOccurrence>1</MinimumOccurrence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se existem pelo menos dois IfcSpace -->
+    <Entity>
+      <Name>IfcSpace</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+        <MinimumOccurrence>2</MinimumOccurrence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcWall está presente -->
+    <Entity>
+      <Name>IfcWall</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcSlab está presente -->
+    <Entity>
+      <Name>IfcSlab</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcWindow está presente -->
+    <Entity>
+      <Name>IfcWindow</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcDoor está presente -->
+    <Entity>
+      <Name>IfcDoor</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcFurniture está presente -->
+    <Entity>
+      <Name>IfcFurniture</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcBeam está presente -->
+    <Entity>
+      <Name>IfcBeam</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcColumn está presente -->
+    <Entity>
+      <Name>IfcColumn</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcRoof está presente -->
+    <Entity>
+      <Name>IfcRoof</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcStair está presente -->
+    <Entity>
+      <Name>IfcStair</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcCovering está presente -->
+    <Entity>
+      <Name>IfcCovering</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se as coordenadas do projeto estão dentro do território brasileiro -->
+    <Entity>
+      <Name>IfcSite</Name>
+      <PropertySet>
+        <Name>Pset_SiteCommon</Name>
+        <Property>
+          <Name>Latitude</Name>
+          <Requirement>
+            <ValueRange>
+              <Minimum>-34.0</Minimum> <!-- Latitude mínima do Brasil -->
+              <Maximum>5.3</Maximum>   <!-- Latitude máxima do Brasil -->
+            </ValueRange>
+          </Requirement>
+        </Property>
+        <Property>
+          <Name>Longitude</Name>
+          <Requirement>
+            <ValueRange>
+              <Minimum>-74.0</Minimum> <!-- Longitude mínima do Brasil -->
+              <Maximum>-34.0</Maximum> <!-- Longitude máxima do Brasil -->
+            </ValueRange>
+          </Requirement>
+        </Property>
+      </PropertySet>
+    </Entity>
+
+    <!-- Verificar quais disciplinas de projeto estão incluídas (Arquitetura, Estrutura, Instalações) -->
+    <Entity>
+      <Name>IfcBuildingElement</Name>
+      <PropertySet>
+        <Name>Pset_Classification</Name>
+        <Property>
+          <Name>Discipline</Name>
+          <Requirement>
+            <ValueList>
+              <Value>Arquitetura</Value>
+              <Value>Estrutura</Value>
+              <Value>Instalações</Value>
+            </ValueList>
+            <ValuePresence>mandatory</ValuePresence>
+          </Requirement>
+        </Property>
+      </PropertySet>
+    </Entity>
+
+    <!-- Verificar se há elementos duplicados ou sobrepostos (Placeholder para ferramentas de verificação BIM) -->
+    <Entity>
+      <Name>IfcElement</Name>
+      <Requirement>
+        <DuplicateElementsCheck>enabled</DuplicateElementsCheck> <!-- Placeholder: checar sobreposição/duplicação -->
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se há especificações técnicas de pelo menos um elemento -->
+    <Entity>
+      <Name>IfcElement</Name>
+      <PropertySet>
+        <Name>Pset_ElementTechnical</Name>
+        <Property>
+          <Name>Specifications</Name>
+          <Requirement>
+            <ValuePresence>mandatory</ValuePresence>
+          </Requirement>
+        </Property>
+      </PropertySet>
+      <Requirement>
+        <MinimumOccurrence>1</MinimumOccurrence>
+      </Requirement>
+    </Entity>
+  </Requirements>
+</InformationDeliverySpecification>
