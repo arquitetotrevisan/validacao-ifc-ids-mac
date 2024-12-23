@@ -121,25 +121,26 @@ def main():
     with open(REPORT_PATH, "w") as report_file:
         json.dump(validation_reports, report_file, indent=4)
 
-    # Salva o relatório completo em formato TXT
-    with open("validation_report.txt", "w") as txt_file:
-        for report in validation_reports:
-            txt_file.write(f"Arquivo: {report['file']}\n")
-            if "error" in report:
-                txt_file.write(f"  Erro: {report['error']}\n")
-            else:
-                for result in report["results"]:
-                    txt_file.write(f"  IfcProject: {result['IfcProject']}\n")
-                    txt_file.write(f"  IfcBuilding: {result['IfcBuilding']}\n")
-                    txt_file.write(f"  IfcBuildingStorey: {result['IfcBuildingStorey']}\n")
-                    txt_file.write(f"  IfcSpace: {result['IfcSpace']}\n")
-                    txt_file.write(f"  Coordenadas: {result['Coordenadas']}\n")
-                    txt_file.write(f"  Disciplinas: {result['Disciplinas']}\n")
-                    txt_file.write(f"  Especificações Técnicas: {result['Especificações Técnicas']}\n")
-                    for field in additional_fields:
-            txt_file.write(f"  {field}: {result[field]}\n")
-
-            txt_file.write("\n")
+# Salva o relatório completo em formato TXT
+with open("validation_report.txt", "w") as txt_file:
+    for report in validation_reports:
+        txt_file.write(f"Arquivo: {report['file']}\n")
+        if "error" in report:
+            txt_file.write(f"  Erro: {report['error']}\n")
+        else:
+            for result in report["results"]:
+                txt_file.write(f"  IfcProject: {result['IfcProject']}\n")
+                txt_file.write(f"  IfcBuilding: {result['IfcBuilding']}\n")
+                txt_file.write(f"  IfcBuildingStorey: {result['IfcBuildingStorey']}\n")
+                txt_file.write(f"  IfcSpace: {result['IfcSpace']}\n")
+                txt_file.write(f"  Coordenadas: {result['Coordenadas']}\n")
+                txt_file.write(f"  Disciplinas: {result['Disciplinas']}\n")
+                txt_file.write(f"  Especificações Técnicas: {result['Especificações Técnicas']}\n")
+                # Loop para os novos campos Ifc
+                for field in additional_fields:
+                    if field in result:
+                        txt_file.write(f"  {field}: {result[field]}\n")
+        txt_file.write("\n")
 
 if __name__ == "__main__":
     main()
