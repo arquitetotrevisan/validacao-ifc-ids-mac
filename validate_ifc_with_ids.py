@@ -11,7 +11,7 @@ REPORT_PATH = "validation_report.json"
 # Definindo a lista de campos adicionais fora da função
 additional_fields = [
     "IfcWall", "IfcSlab", "IfcWindow", "IfcDoor",
-    "IfcFurniture", "IfcBeam", "IfcColumn", "IfcRailing",
+    "IfcBeam", "IfcColumn", "IfcRailing",
     "IfcStair", "IfcRoof"
 ]
 
