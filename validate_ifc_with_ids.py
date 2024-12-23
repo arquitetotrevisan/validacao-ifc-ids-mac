@@ -136,8 +136,10 @@ def main():
                     txt_file.write(f"  Coordenadas: {result['Coordenadas']}\n")
                     txt_file.write(f"  Disciplinas: {result['Disciplinas']}\n")
                     txt_file.write(f"  Especificações Técnicas: {result['Especificações Técnicas']}\n")
-            txt_file.write("\n")
+                    for field in additional_fields:
+            txt_file.write(f"  {field}: {result[field]}\n")
 
+            txt_file.write("\n")
 
 if __name__ == "__main__":
     main()
