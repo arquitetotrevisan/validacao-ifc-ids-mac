@@ -48,6 +48,86 @@
       </Requirement>
     </Entity>
 
+    <!-- Verificar se IfcWall está presente -->
+    <Entity>
+      <Name>IfcWall</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcSlab está presente -->
+    <Entity>
+      <Name>IfcSlab</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcWindow está presente -->
+    <Entity>
+      <Name>IfcWindow</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcDoor está presente -->
+    <Entity>
+      <Name>IfcDoor</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcFurniture está presente -->
+    <Entity>
+      <Name>IfcFurniture</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcBeam está presente -->
+    <Entity>
+      <Name>IfcBeam</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcColumn está presente -->
+    <Entity>
+      <Name>IfcColumn</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcRoof está presente -->
+    <Entity>
+      <Name>IfcRoof</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcStair está presente -->
+    <Entity>
+      <Name>IfcStair</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
+    <!-- Verificar se IfcCovering está presente -->
+    <Entity>
+      <Name>IfcCovering</Name>
+      <Requirement>
+        <Presence>mandatory</Presence>
+      </Requirement>
+    </Entity>
+
     <!-- Verificar se as coordenadas do projeto estão dentro do território brasileiro -->
     <Entity>
       <Name>IfcSite</Name>
