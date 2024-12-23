@@ -46,6 +46,20 @@ def validate_ifc_with_ids(ifc_file, ids_root):
         else:
             result["IfcSpace"] = "Menos de 2 espaços encontrados"
 
+        # Verifica a presença dos novos campos Ifc
+        additional_fields = [
+            "IfcWall", "IfcSlab", "IfcWindow", "IfcDoor",
+            "IfcFurniture", "IfcBeam", "IfcColumn", "IfcRailing",
+            "IfcStair", "IfcRoof"
+        ]
+
+        for field in additional_fields:
+            entities = model.by_type(field)
+            if entities:
+                result[field] = f"{len(entities)} encontrados"
+            else:
+                result[field] = "Ausente"
+
         # Obtém as coordenadas (assume-se que as coordenadas são da primeira instância de IfcSite)
         ifc_site = model.by_type("IfcSite")
         if ifc_site:
