@@ -1,3 +1,84 @@
+import os
+import json
+import csv
+from lxml import etree
+import ifcopenshell
+import pyproj
+
+# Defina o caminho para o arquivo IDS e para o relatório
+IDS_PATH = "path/to/ids_file.xml"  # Substitua com o caminho real do seu arquivo IDS
+REPORT_PATH = "reports/validation_report.json"  # Caminho do relatório JSON
+
+# Defina os campos adicionais que você deseja verificar
+additional_fields = [
+    "IfcWall", "IfcSlab", "IfcWindow", "IfcDoor", "IfcBeam", "IfcColumn", 
+    "IfcRailing", "IfcStair", "IfcRoof"
+]
+
+# Função para validar a presença dos campos no arquivo IFC
+def validate_ifc_with_ids(file, ids_root):
+    try:
+        # Carrega o arquivo IFC
+        ifc_file = ifcopenshell.open(file)
+        
+        # Extração de dados do arquivo IFC
+        project = ifc_file.by_type("IfcProject")
+        building = ifc_file.by_type("IfcBuilding")
+        building_storey = ifc_file.by_type("IfcBuildingStorey")
+        spaces = ifc_file.by_type("IfcSpace")
+        coordinates = get_coordinates(ifc_file)
+        
+        # Obtendo os valores dos campos adicionais
+        additional_data = {}
+        for field in additional_fields:
+            additional_data[field] = len(ifc_file.by_type(field))
+
+        # Simulando um retorno de disciplinas e especificações técnicas
+        disciplines = "Nenhuma disciplina encontrada"
+        technical_specifications = "Ausentes"
+        
+        # Criando o resultado da validação
+        result = {
+            "file": file,
+            "results": [{
+                "IfcProject": "Presente" if project else "Ausente",
+                "IfcBuilding": "Presente" if building else "Ausente",
+                "IfcBuildingStorey": "Presente" if building_storey else "Ausente",
+                "IfcSpace": f"{len(spaces)} espaços encontrados" if spaces else "Ausente",
+                "Coordenadas": coordinates,
+                "Disciplinas": disciplines,
+                "Especificações Técnicas": technical_specifications
+            }]
+        }
+        
+        # Adiciona os campos adicionais ao resultado
+        for field, count in additional_data.items():
+            result["results"][0][field] = f"{count} encontrados" if count > 0 else "Ausente"
+        
+        return result
+    except Exception as e:
+        return {
+            "file": file,
+            "error": str(e)
+        }
+
+# Função para obter as coordenadas geográficas do projeto
+def get_coordinates(ifc_file):
+    # Usando um projecionista geográfico para converter as coordenadas
+    coord_transformer = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
+    
+    # Buscando os dados de coordenadas (usualmente o IfcSite tem as coordenadas)
+    ifc_site = ifc_file.by_type("IfcSite")
+    if ifc_site:
+        site = ifc_site[0]
+        if hasattr(site, "RefLatitude") and hasattr(site, "RefLongitude"):
+            lat = site.RefLatitude
+            lon = site.RefLongitude
+            elevation = getattr(site, "RefElevation", "0.0")
+            lat_lon = coord_transformer.transform(lon, lat)
+            return f"Latitude: {lat}, Longitude: {lon}, Elevation: {elevation}m"
+    return "Coordenadas não encontradas"
+
 def main():
     # Carrega o IDS
     with open(IDS_PATH, "r") as f:
@@ -62,5 +143,7 @@ def main():
                     row.extend(result.get(field, "Ausente") for field in additional_fields)
                     csv_writer.writerow(row)
 
-import os
+if __name__ == "__main__":
+    main()
+
 print(f"Diretório atual: {os.getcwd()}")
