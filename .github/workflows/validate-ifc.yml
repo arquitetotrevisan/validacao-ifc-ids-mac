@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install ifcopenshell lxml
+        pip install ifcopenshell lxml pyproj  # Adicionando pyproj aqui
 
     - name: Run validation script
       run: python ./validate_ifc_with_ids.py
@@ -31,7 +31,6 @@ jobs:
     - name: List generated files
       run: |
         ls -l
-
 
     - name: Upload Validation Reports as artifacts
       if: always()
