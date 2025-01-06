@@ -145,3 +145,70 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+import csv  # Importar a biblioteca CSV
+
+def main():
+    # Carrega o IDS
+    with open(IDS_PATH, "r") as f:
+        ids_root = etree.parse(f).getroot()
+
+    # Valida todos os arquivos IFC no repositório
+    validation_reports = []
+    for file in os.listdir("."):
+        if file.endswith(".ifc"):
+            validation_reports.append(validate_ifc_with_ids(file, ids_root))
+
+    # Salva o relatório completo em formato JSON
+    with open(REPORT_PATH, "w") as report_file:
+        json.dump(validation_reports, report_file, indent=4)
+
+    # Salva o relatório completo em formato TXT
+    with open("validation_report.txt", "w") as txt_file:
+        for report in validation_reports:
+            txt_file.write(f"Arquivo: {report['file']}\n")
+            if "error" in report:
+                txt_file.write(f"  Erro: {report['error']}\n")
+            else:
+                for result in report["results"]:
+                    txt_file.write(f"  IfcProject: {result['IfcProject']}\n")
+                    txt_file.write(f"  IfcBuilding: {result['IfcBuilding']}\n")
+                    txt_file.write(f"  IfcBuildingStorey: {result['IfcBuildingStorey']}\n")
+                    txt_file.write(f"  IfcSpace: {result['IfcSpace']}\n")
+                    txt_file.write(f"  Coordenadas: {result['Coordenadas']}\n")
+                    txt_file.write(f"  Disciplinas: {result['Disciplinas']}\n")
+                    txt_file.write(f"  Especificações Técnicas: {result['Especificações Técnicas']}\n")
+                    for field in additional_fields:
+                        if field in result:
+                            txt_file.write(f"  {field}: {result[field]}\n")
+            txt_file.write("\n")
+
+    # Salva o relatório completo em formato CSV
+    with open("validation_report.csv", "w", newline="") as csv_file:
+        csv_writer = csv.writer(csv_file)
+        # Cabeçalhos do CSV
+        headers = [
+            "Arquivo", "IfcProject", "IfcBuilding", "IfcBuildingStorey", "IfcSpace",
+            "Coordenadas", "Disciplinas", "Especificações Técnicas"
+        ] + additional_fields
+        csv_writer.writerow(headers)
+
+        # Escreve os dados
+        for report in validation_reports:
+            if "error" in report:
+                csv_writer.writerow([report["file"], report["error"]] + [""] * (len(headers) - 2))
+            else:
+                for result in report["results"]:
+                    row = [
+                        report["file"],
+                        result["IfcProject"],
+                        result["IfcBuilding"],
+                        result["IfcBuildingStorey"],
+                        result["IfcSpace"],
+                        result["Coordenadas"],
+                        result["Disciplinas"],
+                        result["Especificações Técnicas"]
+                    ]
+                    row.extend(result.get(field, "Ausente") for field in additional_fields)
+                    csv_writer.writerow(row)
+
