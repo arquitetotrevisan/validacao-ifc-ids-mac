@@ -80,6 +80,9 @@ def get_coordinates(ifc_file):
     return "Coordenadas não encontradas"
 
 def main():
+    # Verificar se o diretório de relatórios existe; caso contrário, criá-lo
+    if not os.path.exists("reports"):
+        os.makedirs("reports")
     # Carrega o IDS
     with open(IDS_PATH, "r") as f:
         ids_root = etree.parse(f).getroot()
