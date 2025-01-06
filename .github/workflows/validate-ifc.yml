@@ -28,11 +28,17 @@ jobs:
     - name: Run validation script
       run: python ./validate_ifc_with_ids.py
 
-    - name: Upload artifacts
+    - name: List generated files
+      run: |
+        ls -l
+
+
+    - name: Upload Validation Reports as artifacts
+      if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: validation-reports
+        name: ifc-validation-reports
         path: |
-          validation_report.txt
-          validation_report.json
-          validation_report.csv
+          ./validation_report.txt
+          ./validation_report.json
+          ./validation_report.csv
