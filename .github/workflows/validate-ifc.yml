@@ -1,6 +1,5 @@
 name: Validate IFC Files with IDS
 
-
 on:
   workflow_dispatch:  # Permite execução manual
   push:
@@ -32,9 +31,12 @@ jobs:
         run: |
           python3 ./validate_ifc_with_ids.py
 
-      - name: Upload Validation Report as artifact
+      - name: Upload Validation Reports as artifacts
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: ifc-validation-report
-          path: ./validation_report.txt
+          name: ifc-validation-reports
+          path: |
+            ./validation_report.txt
+            ./validation_report.json
+            ./validation_report.csv
