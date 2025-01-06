@@ -26,7 +26,7 @@ jobs:
         pip install ifcopenshell lxml
 
     - name: Run validation script
-      run: python validate_ifc.py
+      run: python validate_ifc_with_ids.py
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
