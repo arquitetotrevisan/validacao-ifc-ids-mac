@@ -37,6 +37,6 @@ jobs:
         with:
           name: ifc-validation-reports
           path: |
-            ./validation_report.txt
-            ./validation_report.json
-            ./validation_report.csv
+            validation_report.txt
+            validation_report.json
+            validation_report.csv
