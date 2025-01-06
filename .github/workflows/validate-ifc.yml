@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install ifcopenshell lxml
 
     - name: Run validation script
       run: python validate_ifc.py
