@@ -1,29 +1,3 @@
-import os
-import json
-import csv
-import ifcopenshell
-from lxml import etree
-
-# Caminho para o IDS
-IDS_PATH = "./ids.xsd"
-# Caminho para os relatórios gerados
-REPORT_PATH_JSON = "validation_report.json"
-REPORT_PATH_TXT = "validation_report.txt"
-REPORT_PATH_CSV = "validation_report.csv"
-
-# Lista de campos adicionais
-additional_fields = [
-    "IfcWall", "IfcSlab", "IfcWindow", "IfcDoor",
-    "IfcBeam", "IfcColumn", "IfcRailing",
-    "IfcStair", "IfcRoof"
-]
-
-def validate_ifc_with_ids(ifc_file, ids_root):
-    """Valida um arquivo IFC contra o IDS fornecido."""
-    report = {"file": ifc_file, "results": []}
-    # [Função original permanece igual, sem alterações relevantes]
-    return report
-
 def main():
     # Carrega o IDS
     with open(IDS_PATH, "r") as f:
@@ -36,23 +10,31 @@ def main():
             validation_reports.append(validate_ifc_with_ids(file, ids_root))
 
     # Salva o relatório completo em formato JSON
-    with open(REPORT_PATH_JSON, "w") as report_file:
+    with open(REPORT_PATH, "w") as report_file:
         json.dump(validation_reports, report_file, indent=4)
 
     # Salva o relatório completo em formato TXT
-    with open(REPORT_PATH_TXT, "w") as txt_file:
+    with open("validation_report.txt", "w") as txt_file:
         for report in validation_reports:
             txt_file.write(f"Arquivo: {report['file']}\n")
             if "error" in report:
                 txt_file.write(f"  Erro: {report['error']}\n")
             else:
                 for result in report["results"]:
-                    for key, value in result.items():
-                        txt_file.write(f"  {key}: {value}\n")
+                    txt_file.write(f"  IfcProject: {result.get('IfcProject', 'N/A')}\n")
+                    txt_file.write(f"  IfcBuilding: {result.get('IfcBuilding', 'N/A')}\n")
+                    txt_file.write(f"  IfcBuildingStorey: {result.get('IfcBuildingStorey', 'N/A')}\n")
+                    txt_file.write(f"  IfcSpace: {result.get('IfcSpace', 'N/A')}\n")
+                    txt_file.write(f"  Coordenadas: {result.get('Coordenadas', 'N/A')}\n")
+                    txt_file.write(f"  Disciplinas: {result.get('Disciplinas', 'N/A')}\n")
+                    txt_file.write(f"  Especificações Técnicas: {result.get('Especificações Técnicas', 'N/A')}\n")
+                    # Loop para os novos campos Ifc
+                    for field in additional_fields:
+                        txt_file.write(f"  {field}: {result.get(field, 'Ausente')}\n")
             txt_file.write("\n")
 
     # Salva o relatório completo em formato CSV
-    with open(REPORT_PATH_CSV, "w", newline="") as csv_file:
+    with open("validation_report.csv", "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         # Cabeçalhos do CSV
         headers = [
@@ -69,16 +51,13 @@ def main():
                 for result in report["results"]:
                     row = [
                         report["file"],
-                        result["IfcProject"],
-                        result["IfcBuilding"],
-                        result["IfcBuildingStorey"],
-                        result["IfcSpace"],
-                        result["Coordenadas"],
-                        result["Disciplinas"],
-                        result["Especificações Técnicas"]
+                        result.get("IfcProject", "N/A"),
+                        result.get("IfcBuilding", "N/A"),
+                        result.get("IfcBuildingStorey", "N/A"),
+                        result.get("IfcSpace", "N/A"),
+                        result.get("Coordenadas", "N/A"),
+                        result.get("Disciplinas", "N/A"),
+                        result.get("Especificações Técnicas", "N/A")
                     ]
                     row.extend(result.get(field, "Ausente") for field in additional_fields)
                     csv_writer.writerow(row)
-
-if __name__ == "__main__":
-    main()
