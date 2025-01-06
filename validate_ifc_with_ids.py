@@ -61,3 +61,6 @@ def main():
                     ]
                     row.extend(result.get(field, "Ausente") for field in additional_fields)
                     csv_writer.writerow(row)
+
+import os
+print(f"Diretório atual: {os.getcwd()}")
