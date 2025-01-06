@@ -6,7 +6,7 @@ import ifcopenshell
 import pyproj
 
 # Defina o caminho para o arquivo IDS e para o relatório
-IDS_PATH = "./ids.xml"
+IDS_PATH = "./ids.xsd"
 REPORT_PATH = "reports/validation_report.json"  # Caminho do relatório JSON
 
 # Defina os campos adicionais que você deseja verificar
