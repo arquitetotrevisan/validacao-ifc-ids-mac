@@ -72,6 +72,23 @@ def latitude_to_decimal(lat):
 def longitude_to_decimal(lon):
     return sum(x / 60 ** i for i, x in enumerate(lon)) if lon else "Inválido"
 
+# Verifica o campo IfcPostalAddress
+def get_postal_address(ifc_file):
+    try:
+        addresses = ifc_file.by_type("IfcPostalAddress")
+        if addresses:
+            address = addresses[0]
+            address_lines = getattr(address, "AddressLines", [])
+            postal_code = getattr(address, "PostalCode", "Não especificado")
+            city = getattr(address, "Town", "Não especificado")
+            return f"{', '.join(address_lines)}, {city}, CEP: {postal_code}" if address_lines else "Endereço não especificado"
+    except Exception as e:
+        return f"Erro ao processar endereço: {str(e)}"
+    return "Endereço não encontrado"
+
+postal_address = get_postal_address(ifc_file)
+result["results"][0]["IfcPostalAddress"] = postal_address
+
 # Função principal
 def main():
     # Carrega o IDS
