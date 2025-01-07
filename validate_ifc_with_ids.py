@@ -5,11 +5,11 @@ from lxml import etree
 import ifcopenshell
 import pyproj
 
-# Caminhos para o arquivo IDS e para os relatórios
-IDS_PATH = "./ids.xsd"  # Nome correto do arquivo IDS
-REPORT_PATH = "./reports/validation_report.json"
-TXT_REPORT_PATH = "./reports/validation_report.txt"
-CSV_REPORT_PATH = "./reports/validation_report.csv"
+# Caminhos para os arquivos de relatório diretamente no diretório raiz
+IDS_PATH = "./ids.xsd"
+TXT_REPORT_PATH = "./validation_report.txt"
+JSON_REPORT_PATH = "./validation_report.json"
+CSV_REPORT_PATH = "./validation_report.csv"
 
 # Campos adicionais para validação
 additional_fields = [
@@ -20,20 +20,16 @@ additional_fields = [
 # Função para validar a presença dos campos no arquivo IFC
 def validate_ifc_with_ids(file, ids_root):
     try:
-        # Carrega o arquivo IFC
         ifc_file = ifcopenshell.open(file)
-        
-        # Extração de dados do arquivo IFC
         project = ifc_file.by_type("IfcProject")
         building = ifc_file.by_type("IfcBuilding")
         building_storey = ifc_file.by_type("IfcBuildingStorey")
         spaces = ifc_file.by_type("IfcSpace")
         coordinates = get_coordinates(ifc_file)
-
-        # Obtendo os valores dos campos adicionais
+        
+        # Conta os elementos dos campos adicionais
         additional_data = {field: len(ifc_file.by_type(field)) for field in additional_fields}
 
-        # Resultado da validação
         result = {
             "file": file,
             "results": [{
@@ -45,16 +41,13 @@ def validate_ifc_with_ids(file, ids_root):
             }]
         }
 
-        # Adiciona os campos adicionais ao resultado
+        # Adiciona os campos adicionais
         for field, count in additional_data.items():
             result["results"][0][field] = f"{count} encontrados" if count > 0 else "Ausente"
 
         return result
     except Exception as e:
-        return {
-            "file": file,
-            "error": str(e)
-        }
+        return {"file": file, "error": str(e)}
 
 # Função para obter coordenadas em formato legível
 def get_coordinates(ifc_file):
@@ -73,7 +66,7 @@ def get_coordinates(ifc_file):
         return f"Erro ao processar coordenadas: {str(e)}"
     return "Coordenadas não encontradas"
 
-# Funções para converter latitude/longitude em decimal
+# Funções para conversão de latitude/longitude
 def latitude_to_decimal(lat):
     return sum(x / 60 ** i for i, x in enumerate(lat)) if lat else "Inválido"
 
@@ -82,10 +75,6 @@ def longitude_to_decimal(lon):
 
 # Função principal
 def main():
-    # Verifica se o diretório de relatórios existe; caso contrário, cria-o
-    if not os.path.exists("reports"):
-        os.makedirs("reports")
-
     # Carrega o IDS
     with open(IDS_PATH, "r") as f:
         ids_root = etree.parse(f).getroot()
@@ -96,11 +85,11 @@ def main():
         if file.endswith(".ifc"):
             validation_reports.append(validate_ifc_with_ids(file, ids_root))
 
-    # Salva o relatório em JSON
-    with open(REPORT_PATH, "w") as json_file:
+    # Salva o relatório JSON
+    with open(JSON_REPORT_PATH, "w") as json_file:
         json.dump(validation_reports, json_file, indent=4)
 
-    # Salva o relatório em TXT
+    # Salva o relatório TXT
     with open(TXT_REPORT_PATH, "w") as txt_file:
         for report in validation_reports:
             txt_file.write(f"Arquivo: {report['file']}\n")
@@ -112,13 +101,11 @@ def main():
                         txt_file.write(f"  {key}: {value}\n")
             txt_file.write("\n")
 
-    # Salva o relatório em CSV
+    # Salva o relatório CSV
     with open(CSV_REPORT_PATH, "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
-        # Cabeçalhos
         headers = ["Arquivo", "IfcProject", "IfcBuilding", "IfcBuildingStorey", "IfcSpace", "Coordenadas"] + additional_fields
         csv_writer.writerow(headers)
-        # Dados
         for report in validation_reports:
             if "error" in report:
                 csv_writer.writerow([report["file"], report["error"]] + [""] * (len(headers) - 2))
