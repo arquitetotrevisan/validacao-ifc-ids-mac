@@ -13,8 +13,7 @@ CSV_REPORT_PATH = "./validation_report.csv"
 
 # Campos adicionais para validação
 additional_fields = [
-    "IfcWall", "IfcSlab", "IfcWindow", "IfcDoor", "IfcBeam", "IfcColumn",
-    "IfcRailing", "IfcStair", "IfcRoof"
+    "IfcWall", "IfcSlab", "IfcWindow", "IfcDoor", "IfcBeam", "IfcColumn", "IfcStair", "IfcRoof"
 ]
 
 # Função para validar a presença dos campos no arquivo IFC
