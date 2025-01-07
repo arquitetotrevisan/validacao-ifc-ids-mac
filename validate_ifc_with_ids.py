@@ -6,8 +6,10 @@ import ifcopenshell
 import pyproj
 
 # Defina o caminho para o arquivo IDS e para o relatório
-IDS_PATH = "./ids.xsd"
-REPORT_PATH = "reports/validation_report.json"  # Caminho do relatório JSON
+IDS_PATH = "./ids.xml"  # Substitua com o caminho real do seu arquivo IDS
+REPORT_PATH = "./reports/validation_report.json"  # Corrigido para garantir que o arquivo JSON seja gerado no diretório correto
+TXT_REPORT_PATH = "./reports/validation_report.txt"  # Corrigido para garantir que o arquivo TXT seja gerado no diretório correto
+CSV_REPORT_PATH = "./reports/validation_report.csv"  # Corrigido para garantir que o arquivo CSV seja gerado no diretório correto
 
 # Defina os campos adicionais que você deseja verificar
 additional_fields = [
@@ -64,25 +66,30 @@ def validate_ifc_with_ids(file, ids_root):
 
 # Função para obter as coordenadas geográficas do projeto
 def get_coordinates(ifc_file):
-    # Usando um projecionista geográfico para converter as coordenadas
-    coord_transformer = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
+    try:
+        # Usando um projecionista geográfico para converter as coordenadas
+        coord_transformer = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
+        
+        # Buscando os dados de coordenadas (usualmente o IfcSite tem as coordenadas)
+        ifc_site = ifc_file.by_type("IfcSite")
+        if ifc_site:
+            site = ifc_site[0]
+            if hasattr(site, "RefLatitude") and hasattr(site, "RefLongitude"):
+                lat = site.RefLatitude
+                lon = site.RefLongitude
+                elevation = getattr(site, "RefElevation", "0.0")
+                lat_lon = coord_transformer.transform(lon, lat)
+                return f"Latitude: {lat}, Longitude: {lon}, Elevation: {elevation}m"
+    except Exception as e:
+        return f"Erro ao processar coordenadas: {str(e)}"
     
-    # Buscando os dados de coordenadas (usualmente o IfcSite tem as coordenadas)
-    ifc_site = ifc_file.by_type("IfcSite")
-    if ifc_site:
-        site = ifc_site[0]
-        if hasattr(site, "RefLatitude") and hasattr(site, "RefLongitude"):
-            lat = site.RefLatitude
-            lon = site.RefLongitude
-            elevation = getattr(site, "RefElevation", "0.0")
-            lat_lon = coord_transformer.transform(lon, lat)
-            return f"Latitude: {lat}, Longitude: {lon}, Elevation: {elevation}m"
     return "Coordenadas não encontradas"
 
 def main():
     # Verificar se o diretório de relatórios existe; caso contrário, criá-lo
     if not os.path.exists("reports"):
         os.makedirs("reports")
+    
     # Carrega o IDS
     with open(IDS_PATH, "r") as f:
         ids_root = etree.parse(f).getroot()
@@ -98,7 +105,7 @@ def main():
         json.dump(validation_reports, report_file, indent=4)
 
     # Salva o relatório completo em formato TXT
-    with open("validation_report.txt", "w") as txt_file:
+    with open(TXT_REPORT_PATH, "w") as txt_file:
         for report in validation_reports:
             txt_file.write(f"Arquivo: {report['file']}\n")
             if "error" in report:
@@ -118,7 +125,7 @@ def main():
             txt_file.write("\n")
 
     # Salva o relatório completo em formato CSV
-    with open("validation_report.csv", "w", newline="") as csv_file:
+    with open(CSV_REPORT_PATH, "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         # Cabeçalhos do CSV
         headers = [
@@ -148,5 +155,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-print(f"Diretório atual: {os.getcwd()}")
