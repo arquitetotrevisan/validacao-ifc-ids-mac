@@ -44,6 +44,10 @@ def validate_ifc_with_ids(file, ids_root):
         for field, count in additional_data.items():
             result["results"][0][field] = f"{count} encontrados" if count > 0 else "Ausente"
 
+        # Adiciona o endereço postal
+        postal_address = get_postal_address(ifc_file)
+        result["results"][0]["IfcPostalAddress"] = postal_address
+        
         return result
     except Exception as e:
         return {"file": file, "error": str(e)}
@@ -86,9 +90,6 @@ def get_postal_address(ifc_file):
         return f"Erro ao processar endereço: {str(e)}"
     return "Endereço não encontrado"
 
-postal_address = get_postal_address(ifc_file)
-result["results"][0]["IfcPostalAddress"] = postal_address
-
 # Função principal
 def main():
     # Carrega o IDS
@@ -117,7 +118,7 @@ def main():
                         if key == "IfcPostalAddress":
                             txt_file.write(f"  Endereço: {value}\n")
                         else:
-                    txt_file.write(f"  {key}: {value}\n")
+                                txt_file.write(f"  {key}: {value}\n")
 
 
     # Salva o relatório CSV
