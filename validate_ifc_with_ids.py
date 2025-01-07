@@ -114,8 +114,11 @@ def main():
             else:
                 for result in report["results"]:
                     for key, value in result.items():
-                        txt_file.write(f"  {key}: {value}\n")
-            txt_file.write("\n")
+                        if key == "IfcPostalAddress":
+                            txt_file.write(f"  Endereço: {value}\n")
+                        else:
+                    txt_file.write(f"  {key}: {value}\n")
+
 
     # Salva o relatório CSV
     with open(CSV_REPORT_PATH, "w", newline="") as csv_file:
