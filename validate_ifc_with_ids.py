@@ -123,7 +123,7 @@ def main():
     # Salva o relatório CSV
     with open(CSV_REPORT_PATH, "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
-        headers = ["Arquivo", "IfcProject", "IfcBuilding", "IfcBuildingStorey", "IfcSpace", "Coordenadas"] + additional_fields
+        headers = ["Arquivo", "IfcProject", "IfcBuilding", "IfcBuildingStorey", "IfcSpace", "Coordenadas", "IfcPostalAddress"] + additional_fields
         csv_writer.writerow(headers)
         for report in validation_reports:
             if "error" in report:
@@ -131,7 +131,7 @@ def main():
             else:
                 for result in report["results"]:
                     row = [report["file"]]
-                    row.extend(result.get(field, "Ausente") for field in headers[1:])
+                    row.extend(result.get(field, "Ausente") if field != "IfcPostalAddress" else result["IfcPostalAddress"] for field in headers[1:])
                     csv_writer.writerow(row)
 
 if __name__ == "__main__":
