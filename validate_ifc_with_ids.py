@@ -118,7 +118,7 @@ def main():
                         if key == "IfcPostalAddress":
                             txt_file.write(f"  Endereço: {value}\n")
                         else:
-                                txt_file.write(f"  {key}: {value}\n")
+                            txt_file.write(f"  {key}: {value}\n")
 
 
     # Salva o relatório CSV
