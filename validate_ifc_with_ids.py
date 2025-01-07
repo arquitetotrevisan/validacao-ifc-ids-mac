@@ -6,7 +6,7 @@ import ifcopenshell
 import pyproj
 
 # Defina o caminho para o arquivo IDS e para o relatório
-IDS_PATH = "./ids.xml"  # Substitua com o caminho real do seu arquivo IDS
+IDS_PATH = "./ids.xsd"  # Substitua com o caminho real do seu arquivo IDS
 REPORT_PATH = "./reports/validation_report.json"  # Corrigido para garantir que o arquivo JSON seja gerado no diretório correto
 TXT_REPORT_PATH = "./reports/validation_report.txt"  # Corrigido para garantir que o arquivo TXT seja gerado no diretório correto
 CSV_REPORT_PATH = "./reports/validation_report.csv"  # Corrigido para garantir que o arquivo CSV seja gerado no diretório correto
