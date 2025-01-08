@@ -101,7 +101,7 @@ def main():
     print("Iniciando a validação e geração de relatórios...")
 
     if not os.access('.', os.W_OK):
-        print("Não é possível escrever no diretório atual. Verifique as permissões.")
+        print(f"Não é possível escrever no diretório atual ({os.getcwd()}). Verifique as permissões.")
         return  # Finaliza o programa se não puder escrever
     else:
         print("Permissão de escrita confirmada.")
