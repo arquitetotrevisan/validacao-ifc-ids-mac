@@ -5,6 +5,13 @@ from lxml import etree
 import ifcopenshell
 import pyproj
 
+try:
+    import ifcopenshell
+    print("ifcopenshell importado com sucesso!")
+except ImportError as e:
+    print(f"Erro ao importar ifcopenshell: {str(e)}")
+    exit(1)
+
 # Caminhos para os arquivos de relatório diretamente no diretório raiz
 IDS_PATH = "./ids.xsd"
 TXT_REPORT_PATH = "./validation_report.txt"
@@ -92,6 +99,14 @@ def get_postal_address(ifc_file):
 
 # Função principal
 def main():
+    print("Iniciando a validação e geração de relatórios...")
+
+     if not os.access('.', os.W_OK):
+        print("Não é possível escrever no diretório atual. Verifique as permissões.")
+        return  # Finaliza o programa se não puder escrever
+    else:
+        print("Permissão de escrita confirmada.")
+    
     # Carrega o IDS
     with open(IDS_PATH, "r") as f:
         ids_root = etree.parse(f).getroot()
@@ -100,13 +115,16 @@ def main():
     validation_reports = []
     for file in os.listdir("."):
         if file.endswith(".ifc"):
+            print(f"Validando: {file}")
             validation_reports.append(validate_ifc_with_ids(file, ids_root))
 
     # Salva o relatório JSON
+    print("Salvando relatório JSON...")
     with open(JSON_REPORT_PATH, "w") as json_file:
         json.dump(validation_reports, json_file, indent=4)
 
     # Salva o relatório TXT
+    print("Salvando relatório TXT...")
     with open(TXT_REPORT_PATH, "w") as txt_file:
         for report in validation_reports:
             txt_file.write(f"Arquivo: {report['file']}\n")
@@ -122,6 +140,7 @@ def main():
 
 
     # Salva o relatório CSV
+    print("Salvando relatório CSV...")
     with open(CSV_REPORT_PATH, "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         headers = ["Arquivo", "IfcProject", "IfcBuilding", "IfcBuildingStorey", "IfcSpace", "Coordenadas", "IfcPostalAddress"] + additional_fields
