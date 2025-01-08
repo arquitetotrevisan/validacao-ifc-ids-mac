@@ -6,7 +6,6 @@ import ifcopenshell
 import pyproj
 
 try:
-    import ifcopenshell
     print("ifcopenshell importado com sucesso!")
 except ImportError as e:
     print(f"Erro ao importar ifcopenshell: {str(e)}")
@@ -57,7 +56,7 @@ def validate_ifc_with_ids(file, ids_root):
         
         return result
     except Exception as e:
-        return {"file": file, "error": str(e)}
+        return {"file": file, "error": f"Erro ao processar {file}: {str(e)}"}
 
 # Função para obter coordenadas em formato legível
 def get_coordinates(ifc_file):
@@ -73,7 +72,7 @@ def get_coordinates(ifc_file):
                 lon_dec = longitude_to_decimal(lon)
                 return f"Latitude: {lat_dec}, Longitude: {lon_dec}, Elevação: {elevation}m"
     except Exception as e:
-        return f"Erro ao processar coordenadas: {str(e)}"
+        return f"Erro ao processar coordenadas para o arquivo atual: {str(e)}"
     return "Coordenadas não encontradas"
 
 # Funções para conversão de latitude/longitude
@@ -151,7 +150,7 @@ def main():
             else:
                 for result in report["results"]:
                     row = [report["file"]]
-                    row.extend(result.get(field, "Ausente") if field != "IfcPostalAddress" else result["IfcPostalAddress"] for field in headers[1:])
+                    row.extend(result.get(field, "Ausente") for field in headers[1:])
                     csv_writer.writerow(row)
 
 if __name__ == "__main__":
