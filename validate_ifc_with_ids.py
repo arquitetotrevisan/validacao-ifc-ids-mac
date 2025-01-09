@@ -28,6 +28,13 @@ def validate_ifc_with_ids(file, ids_root):
         ifc_file = ifcopenshell.open(file)
         project = ifc_file.by_type("IfcProject")
         building = ifc_file.by_type("IfcBuilding")
+        
+        # Obter valores principais de IfcProject
+        project_content = project[0].Name if project and hasattr(project[0], "Name") else "Ausente"
+
+        # Obter valores principais de IfcBuilding
+        building_content = building[0].Name if building and hasattr(building[0], "Name") else "Ausente"
+        
         building_storey = ifc_file.by_type("IfcBuildingStorey")
         spaces = ifc_file.by_type("IfcSpace")
         coordinates = get_coordinates(ifc_file)
@@ -38,8 +45,8 @@ def validate_ifc_with_ids(file, ids_root):
         result = {
             "file": file,
             "results": [{
-                "IfcProject": "Presente" if project else "Ausente",
-                "IfcBuilding": "Presente" if building else "Ausente",
+                "IfcProject": project_content,
+                "IfcBuilding": building_content,
                 "IfcBuildingStorey": "Presente" if building_storey else "Ausente",
                 "IfcSpace": f"{len(spaces)} espaços encontrados" if spaces else "Ausente",
                 "Coordenadas": coordinates,
