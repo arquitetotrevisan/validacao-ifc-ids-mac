@@ -34,8 +34,8 @@ def validate_ifc_with_ids(file, ids_root):
 
         # Obter valores principais de IfcBuilding
         building_content = building[0].Name if building and hasattr(building[0], "Name") else "Ausente"
-        building_storey = ifc_file.by_type("IfcBuildingStorey")
-        storey_count = len(building_storey)
+        building_storey = ifc_file.by_type("IfcBuildingStorey") or []
+        storey_count = len(building_storey) or []
         spaces = ifc_file.by_type("IfcSpace")
         coordinates = get_coordinates(ifc_file)
         
