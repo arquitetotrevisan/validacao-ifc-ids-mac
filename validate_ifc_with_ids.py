@@ -35,7 +35,7 @@ def validate_ifc_with_ids(file, ids_root):
         # Obter valores principais de IfcBuilding
         building_content = building[0].Name if building and hasattr(building[0], "Name") else 0
         building_storey = ifc_file.by_type("IfcBuildingStorey") or []
-        storey_count = len(building_storey) or []
+        storey_count = len(building_storey)
         spaces = ifc_file.by_type("IfcSpace")
         coordinates = get_coordinates(ifc_file)
         
@@ -88,10 +88,14 @@ def get_coordinates(ifc_file):
 
 # Funções para conversão de latitude/longitude
 def latitude_to_decimal(lat):
-    return sum(x / 60 ** i for i, x in enumerate(lat)) if lat else "Inválido"
+    if len(lat) >= 3:  # Verifica se há pelo menos 3 valores
+        return sum(x / 60 ** i for i, x in enumerate(lat)) if lat else "Inválido"
+    return 0  # Retorna 0 como valor padrão
 
 def longitude_to_decimal(lon):
-    return sum(x / 60 ** i for i, x in enumerate(lon)) if lon else "Inválido"
+    if len(lon) >= 3:  # Verifica se há pelo menos 3 valores
+        return sum(x / 60 ** i for i, x in enumerate(lon)) if lon else "Inválido"
+    return 0  # Retorna 0 como valor padrão
 
 # Verifica o campo IfcPostalAddress
 def get_postal_address(ifc_file):
@@ -143,6 +147,7 @@ def main():
             else:
                 for result in report["results"]:
                     for key, value in result.items():
+                        # Escreve as coordenadas de forma separada (Latitude, Longitude, Elevação)
                         if key in ["Latitude", "Longitude", "Elevação"]:
                             txt_file.write(f"    {key}: {value}\n")
                         elif key == "IfcPostalAddress":
@@ -162,7 +167,7 @@ def main():
             else:
                 for result in report["results"]:
                     row = [report["file"]]
-                    row.extend(result.get(field, 0) for field in headers[1:])
+                    row.extend(result.get(field, 0) if isinstance(result, dict) else 0 for field in headers[1:])
                     csv_writer.writerow(row)
 
 if __name__ == "__main__":
