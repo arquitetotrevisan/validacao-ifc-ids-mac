@@ -30,10 +30,10 @@ def validate_ifc_with_ids(file, ids_root):
         building = ifc_file.by_type("IfcBuilding")
         
         # Obter valores principais de IfcProject
-        project_content = project[0].Name if project and hasattr(project[0], "Name") else "Ausente"
+        project_content = project[0].Name if project and hasattr(project[0], "Name") else 0
 
         # Obter valores principais de IfcBuilding
-        building_content = building[0].Name if building and hasattr(building[0], "Name") else "Ausente"
+        building_content = building[0].Name if building and hasattr(building[0], "Name") else 0
         building_storey = ifc_file.by_type("IfcBuildingStorey") or []
         storey_count = len(building_storey) or []
         spaces = ifc_file.by_type("IfcSpace")
@@ -47,15 +47,17 @@ def validate_ifc_with_ids(file, ids_root):
             "results": [{
                 "IfcProject": project_content,
                 "IfcBuilding": building_content,
-                "IfcBuildingStorey": f"{storey_count} encontrados" if storey_count > 0 else "Ausente",
-                "IfcSpace": f"{len(spaces)} espaços encontrados" if spaces else "Ausente",
-                "Coordenadas": coordinates,
+                "IfcBuildingStorey": storey_count,
+                "IfcSpace": len(spaces) if spaces else 0,
+                "Latitude": coordinates["Latitude"],
+                "Longitude": coordinates["Longitude"],
+                "Elevação": coordinates["Elevação"],
             }]
         }
 
         # Adiciona os campos adicionais
         for field, count in additional_data.items():
-            result["results"][0][field] = f"{count} encontrados" if count > 0 else "Ausente"
+            result["results"][0][field] = count
 
         # Adiciona o endereço postal
         postal_address = get_postal_address(ifc_file)
@@ -75,12 +77,14 @@ def get_coordinates(ifc_file):
                 lat = site.RefLatitude
                 lon = site.RefLongitude
                 elevation = getattr(site, "RefElevation", "0.0")
-                lat_dec = latitude_to_decimal(lat)
-                lon_dec = longitude_to_decimal(lon)
-                return f"Latitude: {lat_dec}, Longitude: {lon_dec}, Elevação: {elevation}m"
+                return {
+                    "Latitude": latitude_to_decimal(lat),
+                    "Longitude": longitude_to_decimal(lon),
+                    "Elevação": elevation
+                }
     except Exception as e:
-        return f"Erro ao processar coordenadas para o arquivo atual: {str(e)}"
-    return "Coordenadas não encontradas"
+        return {"Latitude": 0, "Longitude": 0, "Elevação": 0}
+    return {"Latitude": 0, "Longitude": 0, "Elevação": 0}
 
 # Funções para conversão de latitude/longitude
 def latitude_to_decimal(lat):
@@ -139,17 +143,18 @@ def main():
             else:
                 for result in report["results"]:
                     for key, value in result.items():
-                        if key == "IfcPostalAddress":
+                        if key in ["Latitude", "Longitude", "Elevação"]:
+                            txt_file.write(f"    {key}: {value}\n")
+                        elif key == "IfcPostalAddress":
                             txt_file.write(f"  Endereço: {value}\n")
                         else:
                             txt_file.write(f"    {key}: {value}\n")
-
 
     # Salva o relatório CSV
     print("Salvando relatório CSV...")
     with open(CSV_REPORT_PATH, "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
-        headers = ["Arquivo", "IfcProject", "IfcBuilding", "IfcBuildingStorey", "IfcSpace", "Coordenadas", "IfcPostalAddress"] + additional_fields
+        headers = ["Arquivo", "IfcProject", "IfcBuilding", "IfcBuildingStorey", "IfcSpace", "Latitude", "Longitude", "Elevação", "IfcPostalAddress"] + additional_fields
         csv_writer.writerow(headers)
         for report in validation_reports:
             if "error" in report:
@@ -157,7 +162,7 @@ def main():
             else:
                 for result in report["results"]:
                     row = [report["file"]]
-                    row.extend(result.get(field, "Ausente") for field in headers[1:])
+                    row.extend(result.get(field, 0) for field in headers[1:])
                     csv_writer.writerow(row)
 
 if __name__ == "__main__":
